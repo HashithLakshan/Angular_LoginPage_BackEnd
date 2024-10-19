@@ -38,25 +38,33 @@ public class UserServiceImpl implements UserService {
             List<String> validationList = this.userValidation(userDto);
             if (!validationList.isEmpty()) {
                 commonResponse.setErrorMessages(validationList);
-                return commonResponse;
             }
-try {
+try{
 
     User user1 = userRepository.findByUserName(userDto.getUserName());
-    User user2 = userRepository.findByUserPassword(userDto.getUserPassword());
-    if (user1 == null || user2 == null) {
-        User user = UserDtoIntoUser(userDto);
-        userRepository.save(user);
-        commonResponse.setStatus(true);
-        commonResponse.setCommonMessage("Successfully saved user");
-        commonResponse.setPayload(Collections.singletonList(user));
-
+    if (user1 == null) {
+            User user = UserDtoIntoUser(userDto);
+            userRepository.save(user);
+            commonResponse.setStatus(true);
+            commonResponse.setCommonMessage("Successfully saved user");
+            commonResponse.setPayload(Collections.singletonList(user));
+    }
+    else {
+        if (passwordHashing.checkPassword(userDto.getUserPassword(),user1.getUserPassword())) {
+            commonResponse.setStatus(false);
+            commonResponse.setCommonMessage("This password is using Someone else");
+        }
+        else {
+            User user = UserDtoIntoUser(userDto);
+            userRepository.save(user);
+            commonResponse.setStatus(true);
+            commonResponse.setCommonMessage("Successfully saved user");
+            System.out.println(commonResponse.getCommonMessage());
+            commonResponse.setPayload(Collections.singletonList(user));
+        }
     }
 }catch (Exception e){
     LOGGER.error("************************** Exception User Service getByUserName ******************");
-    commonResponse.setStatus(false);
-    commonResponse.setCommonMessage("Unable to save user");
-
 }
         return commonResponse;
 }
@@ -69,6 +77,7 @@ try {
         
 try {
     User user = userRepository.findByUserName(userName);
+    System.out.println(user);
     if (user != null) {
         if(passwordHashing.checkPassword(userPassword, user.getUserPassword())) {
             return " Successfully logged in";

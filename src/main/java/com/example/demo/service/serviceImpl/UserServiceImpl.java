@@ -41,28 +41,23 @@ public class UserServiceImpl implements UserService {
             }
 try{
 
+
     User user1 = userRepository.findByUserName(userDto.getUserName());
-    if (user1 == null) {
-            User user = UserDtoIntoUser(userDto);
-            userRepository.save(user);
-            commonResponse.setStatus(true);
-            commonResponse.setCommonMessage("Successfully saved user");
-            commonResponse.setPayload(Collections.singletonList(user));
-    }
-    else {
-        if (passwordHashing.checkPassword(userDto.getUserPassword(),user1.getUserPassword())) {
+    if (user1 != null) {
+        if (passwordHashing.checkPassword(userDto.getUserPassword(), user1.getUserPassword())) {
             commonResponse.setStatus(false);
-            commonResponse.setCommonMessage("This password is using Someone else");
+            commonResponse.setCommonMessage("This Password already exit");
         }
-        else {
+    }
+       else {
             User user = UserDtoIntoUser(userDto);
             userRepository.save(user);
             commonResponse.setStatus(true);
-            commonResponse.setCommonMessage("Successfully saved user");
-            System.out.println(commonResponse.getCommonMessage());
-            commonResponse.setPayload(Collections.singletonList(user));
+            commonResponse.setCommonMessage("User Successfully Registered!");
         }
-    }
+
+
+
 }catch (Exception e){
     LOGGER.error("************************** Exception User Service getByUserName ******************");
 }
@@ -77,7 +72,6 @@ try{
         
 try {
     User user = userRepository.findByUserName(userName);
-    System.out.println(user);
     if (user != null) {
         if(passwordHashing.checkPassword(userPassword, user.getUserPassword())) {
             return " Successfully logged in";

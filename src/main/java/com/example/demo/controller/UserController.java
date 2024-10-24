@@ -4,7 +4,6 @@ import com.example.demo.dto.UserDto;
 import com.example.demo.service.UserService;
 import com.example.demo.utill.CommonResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.query.Param;
 import org.springframework.web.bind.annotation.*;
 
 @CrossOrigin

@@ -15,7 +15,7 @@ public class PasswordHashing {
     }
 
     // Hash the User Password
-    public String hashPassword(String userPassword) {
+    public  String hashPassword(String userPassword) {
         return bCryptPasswordEncoder.encode(userPassword);
     }
 }
